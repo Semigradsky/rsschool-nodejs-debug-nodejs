@@ -1,5 +1,10 @@
-var router = require('express').Router()
-var Game = require('../db').import(require('../models/game'))
+import { Router } from 'express'
+
+import { importModel } from '../db.js'
+import GameModel from '../models/game.js'
+
+const router = Router()
+const Game = importModel(GameModel)
 
 router.get('/all', (req, res) => {
   Game.findAll({ where: { owner_id: req.user.id } })
@@ -113,4 +118,4 @@ router.delete('/remove/:id', (req, res) => {
     )
 })
 
-module.exports = router
+export default router

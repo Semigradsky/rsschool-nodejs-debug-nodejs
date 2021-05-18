@@ -1,5 +1,7 @@
-const Sequelize = require('sequelize')
-require('dotenv').config()
+import Sequelize from 'sequelize'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 const sequelize = new Sequelize(
   process.env.DB,
@@ -22,11 +24,10 @@ sequelize.authenticate().then(
   }
 )
 
-module.exports = {
-  import: (Model) => {
-    return Model(sequelize, Sequelize)
-  },
-  sync: () => {
-    // TODO: wtf
-  },
+export function importModel(Model) {
+  return Model(sequelize, Sequelize)
+}
+
+export function sync() {
+  // TODO: wtf
 }

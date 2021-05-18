@@ -1,8 +1,12 @@
-var router = require('express').Router()
-var bcrypt = require('bcryptjs')
-var jwt = require('jsonwebtoken')
+import { Router } from 'express'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
-var User = require('../db').import(require('../models/user'))
+import { importModel } from '../db.js'
+import UserModel from '../models/user.js'
+
+const router = Router()
+const User = importModel(UserModel)
 
 router.post('/signup', (req, res) => {
   User.create({
@@ -48,4 +52,4 @@ router.post('/signin', (req, res) => {
   })
 })
 
-module.exports = router
+export default router

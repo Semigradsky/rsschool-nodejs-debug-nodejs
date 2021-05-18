@@ -1,7 +1,11 @@
-const jwt = require('jsonwebtoken')
-var User = require('../db').import(require('../models/user'))
+import jwt from 'jsonwebtoken'
 
-module.exports = function (req, res, next) {
+import { importModel } from '../db.js'
+import UserModel from '../models/user.js'
+
+const User = importModel(UserModel)
+
+export default function (req, res, next) {
   if (req.method == 'OPTIONS') {
     next()   // allowing options as a method for request
   } else {

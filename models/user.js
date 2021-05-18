@@ -1,5 +1,5 @@
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('user', {
+const User = (sequelize, DataTypes) => (
+  sequelize.define('user', {
     full_name: {
       type: DataTypes.STRING,
       allowNull: false
@@ -21,6 +21,8 @@ module.exports = function(sequelize, DataTypes) {
       validate: {
         isEmail: true
       }
-    }
+    },
   })
-}
+)
+
+export default User

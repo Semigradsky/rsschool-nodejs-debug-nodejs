@@ -1,5 +1,5 @@
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('game', {
+const Game = (sequelize, DataTypes) => (
+  sequelize.define('game', {
     title: {
       type: DataTypes.STRING(25),
       allowNull: false,
@@ -12,7 +12,7 @@ module.exports = function(sequelize, DataTypes) {
 
     studio: {
       type: DataTypes.STRING,
-      allowNull: false,            
+      allowNull: false,
     },
 
     esrb_rating: {
@@ -33,6 +33,8 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       allowNull: false
-    }
+    },
   })
-}
+)
+
+export default Game
