@@ -29,5 +29,5 @@ export function importModel(Model) {
 }
 
 export function sync() {
-  // TODO: wtf
+  sequelize.sync()
 }

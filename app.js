@@ -8,10 +8,11 @@ import validateSession from './middleware/validate-session.js'
 
 const app = express()
 sync()
-app.use(bodyParser)
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded())
 app.use('/api/auth', user)
 app.use(validateSession)
 app.use('/api/game', game)
-app.listen(function() {
+app.listen(4000, function() {
   console.log("App is listening on 4000")
 })
