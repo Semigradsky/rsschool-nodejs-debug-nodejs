@@ -1,51 +1,57 @@
-var router = Router();
-var bcrypt = require('bcrypt');
-var jwt = require('jsonwebtoken');
+import { Router } from 'express'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+import { promisify } from 'util'
 
-var User = require('../db').import('../models/user');
+import db from '../db.js'
+import UserModel from '../models/user.js'
 
-router.post('/signup', (req, res) => {
-    User.create({
-        full_name: req.body.user.full_name,
-        username: req.body.user.username,
-        passwordhash: bcrypt.hashSync(req.body.user.password, 10),
-        email: req.body.user.email,
+const compare = promisify(bcrypt.compare)
+
+const router = Router()
+const User = db.import('user', UserModel)
+
+const createToken = (userId) => jwt.sign(
+  { id: userId },
+  'lets_play_sum_games_man',
+  { expiresIn: 60 * 60 * 24 },
+)
+
+router.post('/signup', async (req, res) => {
+  try {
+    const user = await User.create({
+      full_name: req.body.user.full_name,
+      username: req.body.user.username,
+      passwordHash: bcrypt.hashSync(req.body.user.password, 10),
+      email: req.body.user.email,
     })
-        .then(
-            function signupSuccess(user) {
-                let token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
-                res.status(200).json({
-                    user: user,
-                    token: token
-                })
-            },
 
-            function signupFail(err) {
-                res.status(500).send(err.message)
-            }
-        )
+    res.status(200).json({
+      user: user,
+      token: createToken(user.id),
+    })
+  } catch (err) {
+    res.status(500).send(err.message)
+  }
 })
 
-router.post('/signin', (req, res) => {
-    User.findOne({ where: { username: req.body.user.username } }).then(user => {
-        if (user) {
-            bcrypt.compare(req.body.user.password, user.passwordHash, function (err, matches) {
-                if (matches) {
-                    var token = jwt.sign({ id: user.id }, 'lets_play_sum_games_man', { expiresIn: 60 * 60 * 24 });
-                    res.json({
-                        user: user,
-                        message: "Successfully authenticated.",
-                        sessionToken: token
-                    });
-                } else {
-                    res.status(502).send({ error: "Passwords do not match." })
-                }
-            });
-        } else {
-            res.status(403).send({ error: "User not found." })
-        }
+router.post('/signin', async (req, res) => {
+  const user = await User.findOne({ where: { username: req.body.user.username } })
 
-    })
+  if (!user) {
+    return res.status(403).send({ error: "User not found." })
+  }
+
+  const matches = await compare(req.body.user.password, user.passwordHash)
+  if (!matches) {
+    return res.status(502).send({ error: "Passwords do not match." })
+  }
+
+  res.json({
+    user: user,
+    message: "Successfully authenticated.",
+    sessionToken: createToken(user.id),
+  })
 })
 
-module.exports = router;
+export default router
