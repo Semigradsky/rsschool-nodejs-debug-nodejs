@@ -1,10 +1,10 @@
 import { Router } from 'express'
 
-import { importModel } from '../db.js'
+import db from '../db.js'
 import GameModel from '../models/game.js'
 
 const router = Router()
-const Game = importModel(GameModel)
+const Game = db.import('game', GameModel)
 
 router.get('/all', async (req, res) => {
   try {
@@ -39,7 +39,7 @@ router.post('/create', async (req, res) => {
   try {
     const game = await Game.create({
       title: req.body.game.title,
-      owner_id: req.body.user.id,
+      owner_id: req.user.id,
       studio: req.body.game.studio,
       esrb_rating: req.body.game.esrb_rating,
       user_rating: req.body.game.user_rating,
@@ -68,7 +68,7 @@ router.put('/update/:id', async (req, res) => {
       {
         where: {
           id: req.params.id,
-          owner_id: req.user
+          owner_id: req.user.id
         }
       }
     )

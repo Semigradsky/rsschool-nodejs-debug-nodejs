@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken'
 import { promisify } from 'util'
 
-import { importModel } from '../db.js'
+import db from '../db.js'
 import UserModel from '../models/user.js'
 
-const User = importModel(UserModel)
+const User = db.import('user', UserModel)
 
 const verifyToken = promisify(jwt.verify)
 

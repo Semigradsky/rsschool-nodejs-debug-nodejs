@@ -3,13 +3,13 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { promisify } from 'util'
 
-import { importModel } from '../db.js'
+import db from '../db.js'
 import UserModel from '../models/user.js'
 
 const compare = promisify(bcrypt.compare)
 
 const router = Router()
-const User = importModel(UserModel)
+const User = db.import('user', UserModel)
 
 const createToken = (userId) => jwt.sign(
   { id: userId },
@@ -22,7 +22,7 @@ router.post('/signup', async (req, res) => {
     const user = await User.create({
       full_name: req.body.user.full_name,
       username: req.body.user.username,
-      passwordhash: bcrypt.hashSync(req.body.user.password, 10),
+      passwordHash: bcrypt.hashSync(req.body.user.password, 10),
       email: req.body.user.email,
     })
 

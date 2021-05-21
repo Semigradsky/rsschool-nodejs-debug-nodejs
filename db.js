@@ -24,10 +24,4 @@ sequelize.authenticate().then(
   }
 )
 
-export function importModel(Model) {
-  return Model(sequelize, Sequelize)
-}
-
-export function sync() {
-  sequelize.sync()
-}
+export default sequelize
